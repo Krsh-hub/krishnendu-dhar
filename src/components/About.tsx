@@ -93,8 +93,8 @@ export default function About() {
         </p>
         <figure className="about-photo" data-cursor="HI!">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/img/me2.jpeg" alt="Krishnendu wearing a CURAA t-shirt at a startup event" />
-          <figcaption>Wearing the merch, obviously.</figcaption>
+          <img src="/img/krishnendu.jpg" alt="Krishnendu Dhar taking a mirror selfie in a white shirt" />
+          <figcaption>Kolkata, probably mid-idea.</figcaption>
         </figure>
       </div>
 

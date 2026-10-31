@@ -1,5 +1,7 @@
 # Krishnendu Dhar: Portfolio
 
+Live: https://krishnendu-dhar.vercel.app
+
 Personal portfolio built with a bold editorial, kinetic-type direction.
 
 **Stack:** Next.js 15 · TypeScript · GSAP (ScrollTrigger) · Lenis · React Three Fiber · Tailwind v4

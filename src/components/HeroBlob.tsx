@@ -12,13 +12,19 @@ function Blob() {
   const mesh = useRef<THREE.Mesh>(null);
   const mat = useRef<DistortMat>(null);
   const pointer = useRef({ x: 0, y: 0 });
+  const energy = useRef(0); // rises with pointer speed, decays over time
+  const hovered = useRef(false);
   const intro = useRef(0);
 
   useEffect(() => {
     const off = onIntroDone(() => (intro.current = 1));
     const move = (e: PointerEvent) => {
-      pointer.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-      pointer.current.y = -((e.clientY / window.innerHeight) * 2 - 1);
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
+      const y = -((e.clientY / window.innerHeight) * 2 - 1);
+      const speed = Math.hypot(x - pointer.current.x, y - pointer.current.y);
+      energy.current = Math.min(energy.current + speed * 4, 1.2);
+      pointer.current.x = x;
+      pointer.current.y = y;
     };
     window.addEventListener("pointermove", move);
     return () => {
@@ -34,19 +40,35 @@ function Blob() {
     const scroll = Math.min(window.scrollY / window.innerHeight, 1.2);
     const velocity = Math.min(Math.abs(getLenis()?.velocity ?? 0), 60);
     const mobile = state.size.width < 700;
+    const e = energy.current;
+    const hover = hovered.current ? 1 : 0;
+    const { x: px, y: py } = pointer.current;
 
-    m.rotation.x += dt * 0.12 + velocity * 0.0008;
-    m.rotation.y += dt * 0.18;
-    m.position.x = lerp(m.position.x, (mobile ? 0 : 1.1) + pointer.current.x * 0.45, 0.04);
-    m.position.y = lerp(m.position.y, 0.2 + pointer.current.y * 0.3 + scroll * 1.6, 0.06);
+    energy.current = lerp(e, 0, 0.04);
 
-    const target = intro.current * (mobile ? 0.8 : 1) * (1 + scroll * 0.6);
-    m.scale.setScalar(lerp(m.scale.x, target, intro.current ? 0.05 : 0.2));
-    mat.current.distort = lerp(mat.current.distort, 0.38 + velocity * 0.006, 0.08);
+    // Spin faster when excited, and lean toward the pointer
+    m.rotation.x += dt * (0.12 + e * 1.2) + velocity * 0.0008;
+    m.rotation.y += dt * (0.18 + e * 1.6);
+    m.rotation.z = lerp(m.rotation.z, -px * 0.5, 0.08);
+
+    m.position.x = lerp(m.position.x, (mobile ? 0 : 1.1) + px * 1.0, 0.09);
+    m.position.y = lerp(m.position.y, 0.2 + py * 0.65 + scroll * 1.6, 0.09);
+
+    const target = intro.current * (mobile ? 0.8 : 1) * (1 + scroll * 0.6 + hover * 0.12 + e * 0.08);
+    m.scale.setScalar(lerp(m.scale.x, target, intro.current ? 0.08 : 0.2));
+
+    mat.current.distort = lerp(mat.current.distort, 0.36 + e * 0.26 + hover * 0.18 + velocity * 0.006, 0.12);
+    mat.current.time += dt * e * 3; // extra wobble speed on top of the base animation
   });
 
   return (
-    <mesh ref={mesh} scale={0}>
+    <mesh
+      ref={mesh}
+      scale={0}
+      onPointerOver={() => (hovered.current = true)}
+      onPointerOut={() => (hovered.current = false)}
+      onPointerDown={() => (energy.current = 1.5)}
+    >
       <icosahedronGeometry args={[1.35, 64]} />
       <MeshDistortMaterial
         ref={mat}
