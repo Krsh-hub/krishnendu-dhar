@@ -22,20 +22,23 @@ export default function Hero() {
 
   useGSAP(
     () => {
-      gsap.set(".hero-name .char > span", { yPercent: 115, rotate: 8 });
+      // Explicit selector: the intro callback fires inside the preloader's GSAP context,
+      // so bare selector strings would resolve against the wrong scope.
+      const q = gsap.utils.selector(root);
+      gsap.set(q(".hero-name .char > span"), { yPercent: 115, rotate: 8 });
       const off = onIntroDone(() => {
         setReady(true);
         gsap
           .timeline({ delay: 0.25 })
-          .to(".hero-name .char > span", {
+          .to(q(".hero-name .char > span"), {
             yPercent: 0,
             rotate: 0,
             duration: 1.4,
             ease: "expo.out",
             stagger: { each: 0.045, from: "start" },
           })
-          .from(".hero-meta > *", { opacity: 0, y: 20, duration: 0.9, ease: "power3.out", stagger: 0.08 }, 0.4)
-          .from(".hero-scroll", { opacity: 0, duration: 1 }, 0.9);
+          .from(q(".hero-meta > *"), { opacity: 0, y: 20, duration: 0.9, ease: "power3.out", stagger: 0.08 }, 0.4)
+          .from(q(".hero-scroll"), { opacity: 0, duration: 1 }, 0.9);
       });
 
       // Scroll: letters drift apart at different speeds as the hero leaves

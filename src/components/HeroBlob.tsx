@@ -6,7 +6,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { MeshDistortMaterial } from "@react-three/drei";
 import { getLenis, onIntroDone } from "@/lib/motion";
 
-type DistortMat = THREE.MeshPhysicalMaterial & { distort: number };
+type DistortMat = React.ComponentRef<typeof MeshDistortMaterial>;
 
 function Blob() {
   const mesh = useRef<THREE.Mesh>(null);
