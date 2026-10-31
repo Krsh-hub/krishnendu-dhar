@@ -4,11 +4,11 @@ export const profile = {
   last: "DHAR",
   role: "Founder & Builder",
   location: "Kolkata, IN",
-  email: "krishnendudhar10@gmail.com",
+  email: "krishnendudhar10@curaapets.com",
   socials: [
     { label: "GitHub", href: "https://github.com/Krsh-hub" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/krishnendu-dhar-b2a5562b2" },
-    { label: "Instagram", href: "https://www.instagram.com/heykr1sh" },
+    { label: "Instagram", href: "https://www.instagram.com/thekr1shh" },
     { label: "X / Twitter", href: "https://x.com/zeuskd_18" },
   ],
   phrases: [
